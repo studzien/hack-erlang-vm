@@ -1,5 +1,13 @@
 #Hack your own Erlang VM
 
+## Logistics
+
+My e-mail is rafal.studnicki(at)erlang-solutions.com.
+
+If you have any questions concerning the exercises please don't hesitate to ask :)
+
+If you manage to implement them please submit them by e-mail as well.
+
 ## Exercises
 
 ### 1.1 Implement atom table
