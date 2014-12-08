@@ -1,0 +1,12 @@
+{application, hevm,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { hevm_app, []}},
+  {env, []}
+ ]}.
