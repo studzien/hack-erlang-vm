@@ -27,6 +27,7 @@ init([]) ->
                 ?CHILD(hevm_loader, worker),
                 ?CHILD(hevm_atoms, worker),
                 ?CHILD(hevm_exports, worker),
-                ?CHILD(hevm_code, worker)
+                ?CHILD(hevm_code, worker),
+                ?CHILD(hevm_emu, worker)
                 ]} }.
 

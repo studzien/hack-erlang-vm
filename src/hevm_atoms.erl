@@ -12,7 +12,8 @@
 %% API
 -export([start_link/0,
          list/0,
-         add/1]).
+         add/1,
+         get/1]).
 
 %% gen_server callbacks
 -export([init/1,
@@ -36,6 +37,9 @@ list() ->
 add(Atom) ->
     gen_server:call(?MODULE, {add, Atom}).
 
+get(Atom) ->
+    gen_server:call(?MODULE, {get, Atom}).
+
 %%%===================================================================
 %%% gen_server callbacks
 %%%===================================================================
@@ -46,6 +50,8 @@ init([]) ->
 
 handle_call(list, _From, State) ->
     {reply, handle_list(State), State};
+handle_call({get, Atom}, _From, State) ->
+    {reply, handle_get(Atom, State), State};
 handle_call({add, Atom}, _From, State) ->
     {Index, NewState} = handle_add(Atom, State),
     {reply, Index, NewState};
@@ -86,3 +92,6 @@ handle_add(Atom, State=#state{atom_to_index = AtoI,
 handle_list(#state{index_to_atom = ItoA}) ->
     List = maps:to_list(ItoA),
     lists:keysort(1, List).
+
+handle_get(Atom, #state{atom_to_index = AtoI}) ->
+    maps:get(Atom, AtoI).
