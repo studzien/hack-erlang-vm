@@ -57,15 +57,33 @@ handle_load(Path) ->
     do_load(File).
 
 do_load(<<"FOR1", _Size:32, "BEAM", Chunks/binary>>) ->
+    %% we are loading a local atom table to the global atom table
     State1 = load_atom_chunk(Chunks, #state{}),
+    %% we extract exported functions
+    %% (they will be loaded later when we know where are the entry points
+    %% for each function)
     State2 = load_exports_chunk(Chunks, State1),
+    %% we extract imported functions
+    %% we don't insert the appropriate information to the code
+    %% cause this will need knowledge about what opcodes take import index
+    %% as an argument, we will store it together with code and use it then
     State3 = load_imports_chunk(Chunks, State2),
+    %% we load (and uncompress) literals, they will be inserted into the code 
     State4 = load_literals_chunk(Chunks, State3),
+    %% we decode binary code (opcodes and tagged arguments in a basic manner)
+    %% see transform_code and transform_args 
     State5 = load_code_chunk(Chunks, State4),
+    %% we discover relationship between label number and position in the code
     State6 = load_labels(State5),
+    %% we replace jumps ({f,_}) in the code to the appropriate position
     State7 = replace_jumps(State6),
+    %% we replace atoms in the code to their global counterparts
     State8 = replace_atoms(State7),
+    %% we save relationship between {Module, Function, Arity} tuples
+    %% and code positions 
     do_load_exports(State8),
+    %% we save relationship between Module and the code for whole module
+    %% and imports mapping
     do_load_code(State8).
 
 do_load_exports(#state{exports=Exports, labels=Labels}) ->
